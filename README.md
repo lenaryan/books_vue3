@@ -1,2 +1,2 @@
-# books_vue3
+# Books
 Upgraded version of "books" on Vue 3
