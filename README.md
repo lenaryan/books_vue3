@@ -1,2 +1,3 @@
 # Books
-Upgraded version of "books" on Vue 3
+
+Upgraded version of "books" to Vue 3
