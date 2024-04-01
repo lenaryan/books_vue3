@@ -32,10 +32,10 @@
                     <input id="add__year" type="text" v-model="year">
                 </div>
                 <div class="add__field">
-                    <label for="add__year">Прочитано в</label>
-                    <input id="add__year" type="text" v-model="readYear">
+                    <label for="add__readYear">Прочитано в</label>
+                    <input id="add__readYear" type="text" v-model="readYear">
                 </div>
-                <p v-if="feedback" class="feedback center">Заполни хотя бы название, камон</p>
+                <p v-if="error" class="feedback center">Заполни хотя бы название, камон</p>
                 <button type="submit" class="btn-large deep-purple darken-3 add__btn">Добавить</button>
             </form>
         </transition>
@@ -44,36 +44,45 @@
 
 <script>
 import { db } from '../firebase/init'
+import { ref } from 'vue'
 
 export default {
     name: 'AddBook',
-    data() {
-        return {
-            title: null,
-            description: null,
-            author: null,
-            year: null,
-            readYear: null,
-            feedback: false
-        }
-    },
-    methods: {
-        addBook() {
-            if (this.title) {
+    setup() {
+        let error = ref(false)
+        // const book = ref({
+        //     title: null,
+        //     description: null,
+        //     author: null,
+        //     year: null,
+        //     readYear: null,
+        // })
+        const title = ref(null);
+        const description = ref(null);
+        const author = ref(null);
+        const year = ref(null);
+        const readYear = ref(null);
+
+        const addBook = () => {
+            if (title.value) {
+                console.log('before add');
                 db.collection('books').add({
-                    title: this.title,
-                    description: this.description,
-                    author: this.author,
-                    year: this.year,
-                    readYear: this.readYear
+                    title: title.value,
+                    description: description.value,
+                    author: author.value,
+                    year: year.value,
+                    readYear: readYear.value
                 }).then(() => {
+                    console.log('then');
                     this.$router.push({ name: 'Books' })
                 }).catch(err => console.log(err))
-                this.feedback = false
+                error.value = false
             } else {
-                this.feedback = true;
+                error.value = true;
             }
         }
+
+        return { error, addBook, title, description, author, year, readYear }
     }
 }
 </script>

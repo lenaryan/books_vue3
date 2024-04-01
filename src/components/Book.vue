@@ -29,13 +29,16 @@
 export default {
     name: 'Book',
     props: ['book'],
-    methods: {
-        deleteBook(id) {
-            this.$emit('delete', {
-                id: this.book.id
+    emits: ['delete'],
+    setup(props, ctx) {
+        const deleteBook = (id) => {
+            ctx.emit('delete', {
+                id: props.book.id
             })
         }
-    }
+
+        return { deleteBook }
+    },
 }
 </script>
 
