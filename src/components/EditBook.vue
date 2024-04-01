@@ -45,21 +45,24 @@
 <script>
 import { onMounted, ref } from 'vue';
 import { db } from '../firebase/init'
+import { useRoute, useRouter } from 'vue-router'
 
 export default {
     name: 'EditBook',
     setup() {
-        let book = ref({
+        const book = ref({
             title: null,
             description: null,
             author: null,
             year: null,
             readYear: null
         });
-        let error = ref(false);
+        const error = ref(false);
+        const route = useRoute()
+        const router = useRouter()
 
         onMounted(() => {
-            let ref = db.collection('books').doc(this.$route.params.id)
+            let ref = db.collection('books').doc(route.params.id)
             ref.get().then(doc => {
                 book.value = doc.data()
                 book.value.id = doc.id
@@ -75,7 +78,7 @@ export default {
                     year: book.value.year,
                     readYear: book.value.readYear
                 }).then(() => {
-                    this.$router.push({ name: 'Books' })
+                    router.push({ name: 'Books' })
                 }).catch(err => console.log(err))
                 error.value = false
             } else {

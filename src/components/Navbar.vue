@@ -30,8 +30,8 @@ import { firebase } from '../firebase/init'
 export default {
   name: 'Navbar',
   setup() {
-    let user = ref(null);
-    let menuOpened = ref(false);
+    const user = ref(null);
+    const menuOpened = ref(false);
 
     onMounted(() => {
       firebase.auth().onAuthStateChanged(authUser => {

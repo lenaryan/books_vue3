@@ -37,9 +37,9 @@ export default {
         Book
     },
     setup() {
-        let books = ref([]);
-        let filteredBooks = ref([]);
-        let readYearsArr = ref([]);
+        const books = ref([]);
+        const filteredBooks = ref([]);
+        const readYearsArr = ref([]);
 
         onMounted(() => {
             let readYears = new Set();

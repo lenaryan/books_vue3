@@ -45,27 +45,21 @@
 <script>
 import { db } from '../firebase/init'
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 export default {
     name: 'AddBook',
     setup() {
-        let error = ref(false)
-        // const book = ref({
-        //     title: null,
-        //     description: null,
-        //     author: null,
-        //     year: null,
-        //     readYear: null,
-        // })
+        const error = ref(false)
         const title = ref(null);
         const description = ref(null);
         const author = ref(null);
         const year = ref(null);
         const readYear = ref(null);
+        const router = useRouter()
 
         const addBook = () => {
             if (title.value) {
-                console.log('before add');
                 db.collection('books').add({
                     title: title.value,
                     description: description.value,
@@ -73,8 +67,7 @@ export default {
                     year: year.value,
                     readYear: readYear.value
                 }).then(() => {
-                    console.log('then');
-                    this.$router.push({ name: 'Books' })
+                    router.push({ name: 'Books' })
                 }).catch(err => console.log(err))
                 error.value = false
             } else {
