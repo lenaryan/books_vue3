@@ -23,7 +23,7 @@
                     <label for="login__pass">Пароль</label>
                     <input id="login__pass" type="password" v-model="password">
                 </div>
-                <p v-if="feedback" class="feedback center">Заполни форму нормально</p>
+                <p v-if="error" class="feedback center">Заполни форму нормально</p>
                 <button type="submit" class="btn-large deep-purple darken-3 login__btn">Войти</button>
             </form>
         </transition>
@@ -31,29 +31,29 @@
 </template>
 
 <script>
+import { ref } from 'vue'
 import { firebase } from '../firebase/init'
 
 export default {
     name: 'Login',
-    data() {
-        return {
-            email: null,
-            password: null,
-            feedback: false
-        }
-    },
-    methods: {
-        logIn() {
-            if (this.email && this.password) {
-                firebase.auth().signInWithEmailAndPassword(this.email, this.password)
+    setup() {
+        let email = ref(null)
+        let password = ref(null)
+        let error = ref(false)
+
+        const logIn = () => {
+            if (email.value && password.value) {
+                firebase.auth().signInWithEmailAndPassword(email.value, password.value)
                     .then(cred => {
                         this.$router.push({ name: 'Books' })
-                    }).catch(err => this.feedback = true)
-                this.feedback = false
+                    }).catch(err => error.value = true)
+                error.value = false
             } else {
-                this.feedback = true
+                error.value = true
             }
         }
+
+        return { email, password, error, logIn }
     }
 }
 </script>
