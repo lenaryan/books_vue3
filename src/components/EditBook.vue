@@ -35,48 +35,51 @@
                     <label for="add__year">Прочитано в</label>
                     <input id="add__year" type="text" v-model="book.readYear">
                 </div>
-                <p v-if="feedback" class="feedback center">Заполни хотя бы название, камон</p>
+                <p v-if="error" class="feedback center">Заполни хотя бы название, камон</p>
                 <button class="btn-large deep-purple darken-3 edit__btn">Изменить</button>
             </form>
         </transition>
     </section>
 </template>
 
-<script>
-import { db } from '../firebase/init'
+<script setup>
+import { onMounted, ref } from 'vue';
+import { db } from '../firebase/init';
+import { useRoute, useRouter } from 'vue-router';
 
-export default {
-    name: 'EditBook',
-    data() {
-        return {
-            book: null,
-            feedback: false
-        }
-    },
-    created() {
-        let ref = db.collection('books').doc(this.$route.params.id)
-        ref.get().then(doc => {
-            this.book = doc.data()
-            this.book.id = doc.id
-        })
-    },
-    methods: {
-        editBook() {
-            if (this.book.title) {
-                db.collection('books').doc(this.book.id).update({
-                    title: this.book.title,
-                    description: this.book.description,
-                    author: this.book.author,
-                    year: this.book.year,
-                    readYear: this.book.readYear
-                }).then(() => {
-                    this.$router.push({ name: 'Books' })
-                }).catch(err => console.log(err))
-                this.feedback = false
-            } else {
-                this.feedback = true;
-            }
-        }
+const book = ref({
+    title: null,
+    description: null,
+    author: null,
+    year: null,
+    readYear: null
+});
+const error = ref(false);
+const route = useRoute();
+const router = useRouter();
+
+onMounted(() => {
+    let ref = db.collection('books').doc(route.params.id)
+    ref.get().then(doc => {
+        book.value = doc.data()
+        book.value.id = doc.id
+    })
+})
+
+const editBook = () => {
+    if (book.value.title) {
+        db.collection('books').doc(book.value.id).update({
+            title: book.value.title,
+            description: book.value.description,
+            author: book.value.author,
+            year: book.value.year,
+            readYear: book.value.readYear
+        }).then(() => {
+            router.push({ name: 'Books' })
+        }).catch(err => console.log(err))
+        error.value = false
+    } else {
+        error.value = true;
     }
 }
 </script>

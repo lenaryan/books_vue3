@@ -1,4 +1,4 @@
-import { createWebHistory, createRouter } from 'vue-router'
+import { createWebHistory, createRouter, Router } from 'vue-router'
 import Books from '../components/Books.vue'
 import AddBook from '../components/AddBook.vue'
 import EditBook from '../components/EditBook.vue'
@@ -6,7 +6,7 @@ import Wishlist from '../components/Wishlist.vue'
 import Login from '../components/Login.vue'
 import { firebase } from '../firebase/init'
 
-const router = createRouter({
+const router: Router = createRouter({
   history: createWebHistory(),
   routes: [
     {
@@ -43,7 +43,7 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
   // check if route requires auth
   if (to.matched.some(rec => rec.meta.requiresAuth)) {
     // check auth state of user

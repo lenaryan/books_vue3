@@ -24,28 +24,23 @@
   </nav>
 </template>
 
-<script>
+<script setup>
+import { onMounted, ref } from 'vue'
 import { firebase } from '../firebase/init'
-export default {
-  name: 'Navbar',
-  data () {
-    return {
-      user: null,
-      menuOpened: false
+
+const user = ref(null);
+const menuOpened = ref(false);
+
+onMounted(() => {
+  firebase.auth().onAuthStateChanged(authUser => {
+    if (authUser) {
+      user.value = authUser
     }
-  },
-  created() {
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        this.user = user
-      }
-    })
-  },
-  methods: {
-    toggleMenuOpened() {
-      this.menuOpened = !this.menuOpened
-    }
-  }
+  })
+})
+
+const toggleMenuOpened = () => {
+  menuOpened.value = !menuOpened.value
 }
 </script>
 
