@@ -17,23 +17,23 @@
             <form class="add" @submit.prevent="addBook">
                 <div class="add__field">
                     <label for="add__title">Название</label>
-                    <input id="add__title" type="text" v-model="title">
+                    <input id="add__title" type="text" v-model="book.title">
                 </div>
                 <div class="add__field">
                     <label for="add__descr">Описание</label>
-                    <textarea id="add__descr" class="materialize-textarea" v-model="description" />
+                    <textarea id="add__descr" class="materialize-textarea" v-model="book.description" />
                 </div>
                 <div class="add__field">
                     <label for="add__author">Автор</label>
-                    <input id="add__author" type="text" v-model="author">
+                    <input id="add__author" type="text" v-model="book.author">
                 </div>
                 <div class="add__field">
                     <label for="add__year">Год выпуска</label>
-                    <input id="add__year" type="text" v-model="year">
+                    <input id="add__year" type="text" v-model="book.year">
                 </div>
                 <div class="add__field">
                     <label for="add__readYear">Прочитано в</label>
-                    <input id="add__readYear" type="text" v-model="readYear">
+                    <input id="add__readYear" type="text" v-model="book.readYear">
                 </div>
                 <p v-if="error" class="feedback center">Заполни хотя бы название, камон</p>
                 <button type="submit" class="btn-large deep-purple darken-3 add__btn">Добавить</button>
@@ -42,40 +42,35 @@
     </section>
 </template>
 
-<script>
+<script setup>
 import { db } from '../firebase/init'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-export default {
-    name: 'AddBook',
-    setup() {
-        const error = ref(false)
-        const title = ref(null);
-        const description = ref(null);
-        const author = ref(null);
-        const year = ref(null);
-        const readYear = ref(null);
-        const router = useRouter()
+const book = ref({
+    title: null,
+    description: null,
+    author: null,
+    year: null,
+    readYear: null
+});
+const error = ref(false)
+const router = useRouter()
 
-        const addBook = () => {
-            if (title.value) {
-                db.collection('books').add({
-                    title: title.value,
-                    description: description.value,
-                    author: author.value,
-                    year: year.value,
-                    readYear: readYear.value
-                }).then(() => {
-                    router.push({ name: 'Books' })
-                }).catch(err => console.log(err))
-                error.value = false
-            } else {
-                error.value = true;
-            }
-        }
-
-        return { error, addBook, title, description, author, year, readYear }
+const addBook = () => {
+    if (book.value.title) {
+        db.collection('books').add({
+            title: book.value.title,
+            description: book.value.description,
+            author: book.value.author,
+            year: book.value.year,
+            readYear: book.value.readYear
+        }).then(() => {
+            router.push({ name: 'Books' })
+        }).catch(err => console.log(err))
+        error.value = false
+    } else {
+        error.value = true;
     }
 }
 </script>

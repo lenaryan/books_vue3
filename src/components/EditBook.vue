@@ -42,51 +42,44 @@
     </section>
 </template>
 
-<script>
+<script setup>
 import { onMounted, ref } from 'vue';
-import { db } from '../firebase/init'
-import { useRoute, useRouter } from 'vue-router'
+import { db } from '../firebase/init';
+import { useRoute, useRouter } from 'vue-router';
 
-export default {
-    name: 'EditBook',
-    setup() {
-        const book = ref({
-            title: null,
-            description: null,
-            author: null,
-            year: null,
-            readYear: null
-        });
-        const error = ref(false);
-        const route = useRoute()
-        const router = useRouter()
+const book = ref({
+    title: null,
+    description: null,
+    author: null,
+    year: null,
+    readYear: null
+});
+const error = ref(false);
+const route = useRoute();
+const router = useRouter();
 
-        onMounted(() => {
-            let ref = db.collection('books').doc(route.params.id)
-            ref.get().then(doc => {
-                book.value = doc.data()
-                book.value.id = doc.id
-            })
-        })
+onMounted(() => {
+    let ref = db.collection('books').doc(route.params.id)
+    ref.get().then(doc => {
+        book.value = doc.data()
+        book.value.id = doc.id
+    })
+})
 
-        const editBook = () => {
-            if (book.value.title) {
-                db.collection('books').doc(book.value.id).update({
-                    title: book.value.title,
-                    description: book.value.description,
-                    author: book.value.author,
-                    year: book.value.year,
-                    readYear: book.value.readYear
-                }).then(() => {
-                    router.push({ name: 'Books' })
-                }).catch(err => console.log(err))
-                error.value = false
-            } else {
-                error.value = true;
-            }
-        }
-
-        return { error, book, editBook }
+const editBook = () => {
+    if (book.value.title) {
+        db.collection('books').doc(book.value.id).update({
+            title: book.value.title,
+            description: book.value.description,
+            author: book.value.author,
+            year: book.value.year,
+            readYear: book.value.readYear
+        }).then(() => {
+            router.push({ name: 'Books' })
+        }).catch(err => console.log(err))
+        error.value = false
+    } else {
+        error.value = true;
     }
 }
 </script>

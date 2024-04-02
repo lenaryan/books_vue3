@@ -30,32 +30,25 @@
     </section>
 </template>
 
-<script>
+<script setup>
 import { ref } from 'vue'
 import { firebase } from '../firebase/init'
 import { useRouter } from 'vue-router'
 
-export default {
-    name: 'Login',
-    setup() {
-        const email = ref(null)
-        const password = ref(null)
-        const error = ref(false)
-        const router = useRouter()
+const email = ref(null)
+const password = ref(null)
+const error = ref(false)
+const router = useRouter()
 
-        const logIn = () => {
-            if (email.value && password.value) {
-                firebase.auth().signInWithEmailAndPassword(email.value, password.value)
-                    .then(cred => {
-                        router.push({ name: 'Books' })
-                    }).catch(err => error.value = true)
-                error.value = false
-            } else {
-                error.value = true
-            }
-        }
-
-        return { email, password, error, logIn }
+const logIn = () => {
+    if (email.value && password.value) {
+        firebase.auth().signInWithEmailAndPassword(email.value, password.value)
+            .then(cred => {
+                router.push({ name: 'Books' })
+            }).catch(err => error.value = true)
+        error.value = false
+    } else {
+        error.value = true
     }
 }
 </script>

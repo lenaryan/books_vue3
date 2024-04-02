@@ -26,61 +26,51 @@
     </section>
 </template>
 
-<script>
+<script setup>
 import Book from './Book.vue'
 import { db } from '../firebase/init'
 import { onMounted, ref } from 'vue'
 
-export default {
-    name: 'Books',
-    components: {
-        Book
-    },
-    setup() {
-        const books = ref([]);
-        const filteredBooks = ref([]);
-        const readYearsArr = ref([]);
+const books = ref([]);
+const filteredBooks = ref([]);
+const readYearsArr = ref([]);
 
-        onMounted(() => {
-            let readYears = new Set();
+onMounted(() => {
+    let readYears = new Set();
 
-            db.collection('books').get()
-                .then(snapshot => {
-                    snapshot.forEach(doc => {
-                        let book = doc.data();
-                        book.id = doc.id;
-                        books.value.push(book);
-                        readYears.add(book.readYear);
-                    })
-                }).then(() => {
-                        readYearsArr.value = Array.from(readYears).sort((a,b) => (b - a));
-                    }
-                )
-            filteredBooks.value = books.value
+    db.collection('books').get()
+        .then(snapshot => {
+            snapshot.forEach(doc => {
+                let book = doc.data();
+                book.id = doc.id;
+                books.value.push(book);
+                readYears.add(book.readYear);
+            })
+        }).then(() => {
+                readYearsArr.value = Array.from(readYears).sort((a,b) => (b - a));
+            }
+        )
+    filteredBooks.value = books.value
+})
+
+const deleteBook = (data) => {
+    db.collection('books').doc(data.id).delete()
+        .then(() => {
+            books.value = books.value.filter(book => book.id != data.id)
+            filteredBooks.value = filteredBooks.value.filter(book => book.id != data.id)
         })
+}
 
-        const deleteBook = (data) => {
-            db.collection('books').doc(data.id).delete()
-                .then(() => {
-                    books.value = books.value.filter(book => book.id != data.id)
-                    filteredBooks.value = filteredBooks.value.filter(book => book.id != data.id)
-                })
-        }
+const filterBooks = (e) => {
+    //changing classes in switcher
+    document.querySelectorAll('.darken-1').forEach(item => item.className = item.className.replace('darken', 'lighten'))
+    e.target.className = e.target.className.replace('lighten', 'darken');
 
-        const filterBooks = (e) => {
-            //changing classes in switcher
-            document.querySelectorAll('.darken-1').forEach(item => item.className = item.className.replace('darken', 'lighten'))
-            e.target.className = e.target.className.replace('lighten', 'darken');
-
-            if (Number.parseInt(e.target.innerText)) {
-                filteredBooks.value = books.value.filter(book => book.readYear == e.target.innerText)
-            }
-            else {
-                filteredBooks.value = books.value
-            }
-        }
-
-        return { deleteBook, filterBooks, filteredBooks, readYearsArr }
+    if (Number.parseInt(e.target.innerText)) {
+        filteredBooks.value = books.value.filter(book => book.readYear == e.target.innerText)
+    }
+    else {
+        filteredBooks.value = books.value
     }
 }
 </script>

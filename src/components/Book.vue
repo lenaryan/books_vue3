@@ -25,20 +25,22 @@
     </transition>
 </template>
 
-<script>
-export default {
-    name: 'Book',
-    props: ['book'],
-    emits: ['delete'],
-    setup(props, ctx) {
-        const deleteBook = (id) => {
-            ctx.emit('delete', {
-                id: props.book.id
-            })
-        }
+<script setup>
+const props = defineProps({
+  book: {
+    title: String,
+    description: String | null,
+    author: String | null,
+    year: String | null,
+    readYear: String | null,
+  }
+})
+const emits = defineEmits(['delete'])
 
-        return { deleteBook }
-    },
+const deleteBook = (id) => {
+    emits.emit('delete', {
+        id: props.book.id
+    })
 }
 </script>
 

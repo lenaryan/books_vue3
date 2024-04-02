@@ -34,19 +34,12 @@
   </section>
 </template>
 
-<script>
-  export default {
-    name: 'Wishlist',
-    setup() {
-      const list = [
-        { id: 1, author: 'Стивен Кинг', title: 'Тёмная башня'},
-        { id: 2, author: 'Джо Хилл', title: 'Рога'},
-        { id: 3, author: 'Уильям Голдинг', title: 'Повелитель мух'},
-      ]
-
-      return { list }
-    }
-  }
+<script setup>
+const list = [
+  { id: 1, author: 'Стивен Кинг', title: 'Тёмная башня'},
+  { id: 2, author: 'Джо Хилл', title: 'Рога'},
+  { id: 3, author: 'Уильям Голдинг', title: 'Повелитель мух'},
+]
 </script>
 
 <style>
