@@ -43,7 +43,7 @@ const router: Router = createRouter({
   ]
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
   // check if route requires auth
   if (to.matched.some(rec => rec.meta.requiresAuth)) {
     // check auth state of user
