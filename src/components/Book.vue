@@ -5,6 +5,7 @@
         appear-to-class="book-shown"
         appear-active-class="book-shown-active"
     >
+        <!-- TODO: add button to re-read (also in case "Read" was tapped by mistake) -->
         <article class="book col xl4 m6 s12">
             <div class="card deep-purple lighten-4">
                 <button class="material-icons deep-purple-text right book__delete" @click.prevent="deleteBook(book.id)">delete</button>

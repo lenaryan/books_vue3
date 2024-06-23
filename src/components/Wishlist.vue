@@ -15,23 +15,6 @@
       appear-active-class="list-shown-active"
     >
       <div>
-        <!-- TODO: search the books -->
-        <ul class="collection">
-          <li v-for="book in list" :key="book.id" class="collection-item">
-            <div class="collection-item__title">
-              <span class="material-icons deep-purple-text">book</span>
-              <span>{{ book.author }}{{'&nbsp;–&nbsp;'}}{{ book.title }}</span>
-            </div>
-
-            <!-- // TODO: on click:
-            // remember current author and title (store or just sessionStorage?)
-            // remove book from this list
-            // go to the form of adding new book and paste author and title of the book
-            // clear sessionStorage -->
-            <button class="done deep-purple lighten-1 btn-small">Прочитано</button>
-          </li>
-        </ul>
-        <!-- // TODO: re-style the form? -->
         <form class="add" @submit.prevent="addToWishlist">
           <div class="add__field">
             <label for="add__author">Автор</label>
@@ -42,8 +25,24 @@
             <input id="add__title" type="text" v-model="book.title">
           </div>
           <p v-if="error" class="feedback center">Заполни хотя бы название, камон</p>
-          <button type="submit" class="btn-large deep-purple darken-3 add__btn">Добавить</button>
+          <button type="submit" class="btn deep-purple darken-1 add__btn">Добавить</button>
         </form>
+        <!-- TODO: search the books -->
+        <ul class="collection">
+          <li v-for="book in list" :key="book.id" class="collection-item">
+            <div class="collection-item__title">
+              <span class="material-icons deep-purple-text">book</span>
+              <span>{{ book.author }}{{'&nbsp;–&nbsp;'}}{{ book.title }}</span>
+            </div>
+
+            <!-- // TODO: on click:
+            // remember current author and title (store or just sessionStorage?)
+            // go to the form of adding new book and paste author and title of the book
+            // remove book from this list in db if it's added to read books
+            // clear sessionStorage -->
+            <button class="done deep-purple lighten-1 btn-small">Прочитано</button>
+          </li>
+        </ul>
       </div>
     </transition>
   </section>
@@ -92,7 +91,7 @@ const addToWishlist = (event) => {
 }
 </script>
 
-<style>
+<style scoped>
   .list-hidden,
   .title-hidden {
     opacity: 0;
@@ -128,6 +127,10 @@ const addToWishlist = (event) => {
 
   .add {
     margin-top: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
   }
   .add input {
     font-size: 18px;
@@ -136,9 +139,13 @@ const addToWishlist = (event) => {
     border-bottom: 1px solid #4527a0;
     box-shadow: 0 1px 0 0 #4527a0;
   }
+
   .add__btn {
     display: block;
-    margin: 40px auto 0;
+    flex: 1;
+  }
+  .add__field {
+    flex: 3;
   }
 
   @container (max-width: 480px) {
@@ -151,6 +158,16 @@ const addToWishlist = (event) => {
 
     .collection-item__title {
       gap: 10px;
+    }
+  }
+
+  @media (width < 700px) {
+    .add {
+      display: block;
+    }
+
+    .add__btn {
+      margin: 20px auto 0;
     }
   }
 </style>

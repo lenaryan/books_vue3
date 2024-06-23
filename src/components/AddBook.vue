@@ -75,7 +75,7 @@ const addBook = () => {
 }
 </script>
 
-<style>
+<style scoped>
 .add {
     margin-top: 40px;
 }

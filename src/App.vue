@@ -11,6 +11,7 @@
 // - move big functions outside of components
 // - maybe move functions to API folder
 // - do PWA
+// - sort books in alphabetical order?
 import Navbar from './components/Navbar.vue'
 </script>
 
