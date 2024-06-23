@@ -14,7 +14,8 @@
             appear-to-class="yr-shown"
             appear-active-class="yr-shown-active"
         >
-          <!-- // TODO: split to components -->
+            <!-- TODO: search books -->
+            <!-- TODO: split to components -->
             <div class="row switch">
                 <button class="deep-purple lighten-1 btn switch__btn" @click="filterBooks">Все</button>
                 <button v-for="(rYear, index) in readYearsArr" :key="index" class="deep-purple lighten-1 btn switch__btn" @click="filterBooks">{{ rYear }}</button>

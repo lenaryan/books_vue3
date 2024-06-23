@@ -6,6 +6,11 @@
 </template>
 
 <script setup>
+// TODO: refactor everything:
+// - split to components
+// - move big functions outside of components
+// - maybe move functions to API folder
+// - do PWA
 import Navbar from './components/Navbar.vue'
 </script>
 

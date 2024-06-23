@@ -14,37 +14,82 @@
       appear-to-class="list-shown"
       appear-active-class="list-shown-active"
     >
-      <ul class="collection">
-        <li v-for="book in list" :key="book.id" class="collection-item">
-          <div class="collection-item__title">
-            <span class="material-icons deep-purple-text">book</span>
-            <span>{{ book.author }}{{'&nbsp;–&nbsp;'}}{{ book.title }}</span>
-          </div>
+      <div>
+        <!-- TODO: search the books -->
+        <ul class="collection">
+          <li v-for="book in list" :key="book.id" class="collection-item">
+            <div class="collection-item__title">
+              <span class="material-icons deep-purple-text">book</span>
+              <span>{{ book.author }}{{'&nbsp;–&nbsp;'}}{{ book.title }}</span>
+            </div>
 
-          <!-- // TODO: on click:
-          // remember current author and title (store or just sessionStorage?)
-          // remove book from this list
-          // go to the form of adding new book and paste author and title of the book
-          // clear sessionStorage -->
-          <button class="done deep-purple lighten-1 btn-small">Прочитано</button>
-        </li>
-      </ul>
-      <!-- // TODO: form "author + title" to add a new wanna-read -->
+            <!-- // TODO: on click:
+            // remember current author and title (store or just sessionStorage?)
+            // remove book from this list
+            // go to the form of adding new book and paste author and title of the book
+            // clear sessionStorage -->
+            <button class="done deep-purple lighten-1 btn-small">Прочитано</button>
+          </li>
+        </ul>
+        <!-- // TODO: re-style the form? -->
+        <form class="add" @submit.prevent="addToWishlist">
+          <div class="add__field">
+            <label for="add__author">Автор</label>
+            <input id="add__author" type="text" v-model="book.author">
+          </div>
+          <div class="add__field">
+            <label for="add__title">Название</label>
+            <input id="add__title" type="text" v-model="book.title">
+          </div>
+          <p v-if="error" class="feedback center">Заполни хотя бы название, камон</p>
+          <button type="submit" class="btn-large deep-purple darken-3 add__btn">Добавить</button>
+        </form>
+      </div>
     </transition>
   </section>
 </template>
 
 <script setup>
-const list = [
-  { id: 1, author: 'Стивен Кинг', title: 'Тёмная башня'},
-  { id: 2, author: 'Джо Хилл', title: 'Рога'},
-  { id: 3, author: 'Уильям Голдинг', title: 'Повелитель мух'},
-  { id: 4, author: 'Стивен Кинг', title: 'Сияние'},
-  { id: 5, author: 'Салли Руни', title: 'Разговоры с друзьями'},
-  { id: 6, author: 'Мария Корелли', title: 'Скорбь сатаны'},
-  { id: 7, author: 'Ева Меркачёва', title: 'Град обречённых'},
-  { id: 8, author: 'Ричард Матесон', title: 'Я – легенда'},
-]
+import { db } from '../firebase/init'
+import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const list = ref([]);
+const book = ref({
+  author: null,
+  title: null
+});
+const error = ref(false)
+
+onMounted(() => {
+  db.collection('wanna-read').get()
+    .then(snapshot => {
+      snapshot.forEach(doc => {
+        let book = doc.data();
+        book.id = doc.id;
+        list.value.push(book);
+      })
+    })
+})
+
+const addToWishlist = (event) => {
+    if (book.value.title) {
+      db.collection('wanna-read').add({
+        author: book.value.author,
+        title: book.value.title,
+      }).then(() => {
+        list.value.push({
+          author: book.value.author,
+          title: book.value.title,
+        })
+        book.value.author = '';
+        book.value.title = '';
+      }).catch(err => console.log(err))
+      error.value = false
+    } else {
+      error.value = true;
+    }
+}
 </script>
 
 <style>
@@ -59,6 +104,9 @@ const list = [
   .list-shown-active,
   .title-shown-active {
     transition: all 0.3s ease;
+  }
+  .container {
+    margin-bottom: 40px;
   }
   .collection {
     margin-top: 40px;
@@ -76,6 +124,21 @@ const list = [
   }
   .done {
     margin-left: auto;
+  }
+
+  .add {
+    margin-top: 40px;
+  }
+  .add input {
+    font-size: 18px;
+  }
+  .add input[type=text]:focus:not([readonly]) {
+    border-bottom: 1px solid #4527a0;
+    box-shadow: 0 1px 0 0 #4527a0;
+  }
+  .add__btn {
+    display: block;
+    margin: 40px auto 0;
   }
 
   @container (max-width: 480px) {
