@@ -34,13 +34,7 @@
               <span class="material-icons deep-purple-text">book</span>
               <span>{{ book.author }}{{'&nbsp;–&nbsp;'}}{{ book.title }}</span>
             </div>
-
-            <!-- // TODO: on click:
-            // remember current author and title (store or just sessionStorage?)
-            // go to the form of adding new book and paste author and title of the book
-            // remove book from this list in db if it's added to read books
-            // clear sessionStorage -->
-            <button class="done deep-purple lighten-1 btn-small">Прочитано</button>
+            <button class="done deep-purple lighten-1 btn-small" @click="markBookAsRead(book)">Прочитано</button>
           </li>
         </ul>
       </div>
@@ -59,6 +53,7 @@ const book = ref({
   title: null
 });
 const error = ref(false)
+const router = useRouter()
 
 onMounted(() => {
   db.collection('wanna-read').get()
@@ -72,22 +67,29 @@ onMounted(() => {
 })
 
 const addToWishlist = (event) => {
-    if (book.value.title) {
-      db.collection('wanna-read').add({
+  if (book.value.title) {
+    db.collection('wanna-read').add({
+      author: book.value.author,
+      title: book.value.title,
+    }).then(() => {
+      list.value.push({
         author: book.value.author,
         title: book.value.title,
-      }).then(() => {
-        list.value.push({
-          author: book.value.author,
-          title: book.value.title,
-        })
-        book.value.author = '';
-        book.value.title = '';
-      }).catch(err => console.log(err))
-      error.value = false
-    } else {
-      error.value = true;
-    }
+      })
+      book.value.author = '';
+      book.value.title = '';
+    }).catch(err => console.log(err))
+    error.value = false
+  } else {
+    error.value = true;
+  }
+}
+
+const markBookAsRead = (book) => {
+  sessionStorage.setItem('book-author', book.author);
+  sessionStorage.setItem('book-title', book.title);
+  sessionStorage.setItem('book-id', book.id);
+  router.push({ name: 'AddBook' });
 }
 </script>
 
@@ -131,6 +133,7 @@ const addToWishlist = (event) => {
     justify-content: space-between;
     align-items: center;
     gap: 20px;
+    position: relative;
   }
   .add input {
     font-size: 18px;
@@ -146,6 +149,11 @@ const addToWishlist = (event) => {
   }
   .add__field {
     flex: 3;
+  }
+
+  .feedback {
+    position: absolute;
+    top: -50%;
   }
 
   @container (max-width: 480px) {
@@ -168,6 +176,10 @@ const addToWishlist = (event) => {
 
     .add__btn {
       margin: 20px auto 0;
+    }
+
+    .feedback {
+      position: static;
     }
   }
 </style>

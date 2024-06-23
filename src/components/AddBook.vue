@@ -44,7 +44,7 @@
 
 <script setup>
 import { db } from '../firebase/init'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 const book = ref({
@@ -56,6 +56,19 @@ const book = ref({
 });
 const error = ref(false)
 const router = useRouter()
+const isFromWishlist = ref(false);
+
+onMounted(() => {
+    const title = sessionStorage.getItem('book-title');
+    if (title) {
+        isFromWishlist.value = true;
+        book.value.title = title;
+        const author = sessionStorage.getItem('book-author');
+        if (author && author !== 'null') {
+            book.value.author = author;
+        }
+    }
+})
 
 const addBook = () => {
     if (book.value.title) {
@@ -66,6 +79,10 @@ const addBook = () => {
             year: book.value.year,
             readYear: book.value.readYear
         }).then(() => {
+            if (isFromWishlist.value) {
+                db.collection('wanna-read').doc(sessionStorage.getItem('book-id')).delete()
+                sessionStorage.clear();
+            }
             router.push({ name: 'Books' })
         }).catch(err => console.log(err))
         error.value = false
